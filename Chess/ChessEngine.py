@@ -43,8 +43,8 @@ class GameState:
         moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
-                type = self.board[row][col][0]
-                if (type == 'w' and self.whiteToMove) or (type == 'b' and not self.whiteToMove):
+                color = self.board[row][col][0]
+                if (color == 'w' and self.whiteToMove) or (color == 'b' and not self.whiteToMove):
                     piece = self.board[row][col][1]
                     if piece == 'p':
                         self.get_pawn_move(row, col, moves)
@@ -53,11 +53,11 @@ class GameState:
                     elif piece == 'R':
                         self.get_bishop_move(row, col, moves)
                     elif piece == 'R':
-                        self.getKnightMove(row, col, moves)
+                        self.get_knight_move(row, col, moves)
                     elif piece == 'R':
-                        self.getQueenMove(row, col, moves)
+                        self.get_queen_move(row, col, moves)
                     elif piece == 'R':
-                        self.getKingMove(row, col, moves)
+                        self.get_king_move(row, col, moves)
         return moves
 
     """
@@ -65,8 +65,22 @@ class GameState:
     """
 
     def get_pawn_move(self, row, col, moves):
+        pass
 
+    def get_rock_move(self, row, col, moves):
+        pass
 
+    def get_bishop_move(self, row, col, moves):
+        pass
+
+    def get_knight_move(self, row, col, moves):
+        pass
+
+    def get_queen_move(self, row, col, moves):
+        pass
+
+    def get_king_move(self, row, col, moves):
+        pass
 
 
 class Move:
