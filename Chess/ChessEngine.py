@@ -36,11 +36,16 @@ class GameState:
             self.whiteToMove = not self.whiteToMove
 
     """
-    All moves without checks possibilities
+    All moves considering checks
     """
+    def get_valid_moves(self):
+        return self.get_all_possible_move()
 
+    """
+    All moves without checks
+    """
     def get_all_possible_move(self):
-        moves = []
+        moves = [Move((6, 4), (4, 4), self.board)]
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
                 color = self.board[row][col][0]
@@ -50,13 +55,13 @@ class GameState:
                         self.get_pawn_move(row, col, moves)
                     elif piece == 'R':
                         self.get_rock_move(row, col, moves)
-                    elif piece == 'R':
+                    elif piece == 'B':
                         self.get_bishop_move(row, col, moves)
-                    elif piece == 'R':
+                    elif piece == 'N':
                         self.get_knight_move(row, col, moves)
-                    elif piece == 'R':
+                    elif piece == 'Q':
                         self.get_queen_move(row, col, moves)
-                    elif piece == 'R':
+                    elif piece == 'K':
                         self.get_king_move(row, col, moves)
         return moves
 
@@ -98,6 +103,16 @@ class Move:
         self.endCol = end_sq[1]
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
+        self.moveID = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol  # Small hash-like
+        # function for all move in check
+
+    """
+    Overriding equals method
+    """
+    def __eq__(self, other):
+        if isinstance(other, Move):
+            return self.moveID == other.moveID
+        return False
 
     def get_chess_notation(self):
         return self.get_rank_file(self.startRow, self.startCol) + self.get_rank_file(self.endRow, self.endCol)

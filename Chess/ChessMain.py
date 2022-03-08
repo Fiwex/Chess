@@ -37,6 +37,9 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     game_state = ChessEngine.GameState()
+    valid_moves = game_state.get_valid_moves()
+    move_made = False  # Flag for when a move is made
+
     load_images()
     running = True
     sq_selected = ()  # Track last click of user (tuple)
@@ -58,13 +61,20 @@ def main():
                 if len(player_clicks) == 2:  # After the 2cd click
                     move = ChessEngine.Move(player_clicks[0], player_clicks[1], game_state.board)
                     print(move.get_chess_notation())
-                    game_state.make_move(move)
+                    if move in valid_moves:
+                        game_state.make_move(move)
+                        move_made = True
                     sq_selected = ()  # Deselect what user clicked
                     player_clicks = []
 
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_u:  # Undo on "U" key
                     game_state.undo_move()
+                    move_made = True
+
+        if move_made:
+            valid_moves = game_state.get_valid_moves()
+            move_made = False
 
         disp_game_state(screen, game_state)
         clock.tick(MAX_FPS)
