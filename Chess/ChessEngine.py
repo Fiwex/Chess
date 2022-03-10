@@ -45,7 +45,7 @@ class GameState:
     All moves without checks
     """
     def get_all_possible_move(self):
-        moves = [Move((6, 4), (4, 4), self.board)]
+        moves = []
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
                 color = self.board[row][col][0]
@@ -70,7 +70,17 @@ class GameState:
     """
 
     def get_pawn_move(self, row, col, moves):
-        pass
+        if self.whiteToMove:  # because pawns are direction specific
+            if self.board[row - 1][col] == "--":  # front square is empty
+                moves.append(Move((row, col), (row - 1, col), self.board))
+                if row == 6 and self.board[row - 2][col] == "--":
+                    moves.append(Move((row, col), (row - 2, col), self.board))
+
+        else:
+            if self.board[row + 1][col] == "--":
+                moves.append(Move((row, col), (row + 1, col), self.board))
+                if row == 1 and self.board[row + 2][col] == "--":
+                    moves.append(Move((row, col), (row + 2, col), self.board))
 
     def get_rock_move(self, row, col, moves):
         pass
