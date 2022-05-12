@@ -3,17 +3,23 @@ Class for keep data and board related analysis
 """
 
 
+def cond(x, y, row, col, count):
+    if 0 <= row + (x * count) <= 7 and 0 <= col + (y * count) <= 7:
+        return True
+    return False
+
+
 class GameState:
     def __init__(self):
         self.board = [
-            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
+            ["--", "bN", "bB", "bQ", "bK", "bB", "bN", "--"],
             ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
+            ["--", "--", "--", "wB", "--", "--", "--", "--"],
+            ["--", "--", "--", "--", "bB", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
-            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
+            ["--", "wN", "wB", "wQ", "wK", "wB", "wN", "--"]]
         self.whiteToMove = True
         self.moveLog = []
         self.whiteCanCastle = True
@@ -73,20 +79,60 @@ class GameState:
         if self.whiteToMove:  # because pawns are direction specific
             if self.board[row - 1][col] == "--":  # front square is empty
                 moves.append(Move((row, col), (row - 1, col), self.board))
-                if row == 6 and self.board[row - 2][col] == "--":
+                if row == 6 and self.board[row - 2][col] == "--":  # 2 square advancing
                     moves.append(Move((row, col), (row - 2, col), self.board))
 
-        else:
+            if col - 1 >= 0:  # Capture to the left
+                if self.board[row - 1][col - 1][0] == 'b':  # check enemy
+                    moves.append(Move((row, col), (row - 1, col - 1), self.board))
+            if col + 1 <= 7:  # Capture to the left
+                if self.board[row - 1][col + 1][0] == 'b':  # check enemy
+                    moves.append(Move((row, col), (row - 1, col + 1), self.board))
+
+        else:  # Black pawns
             if self.board[row + 1][col] == "--":
                 moves.append(Move((row, col), (row + 1, col), self.board))
                 if row == 1 and self.board[row + 2][col] == "--":
                     moves.append(Move((row, col), (row + 2, col), self.board))
 
+            if col + 1 <= 7:  # Capture to the left
+                if self.board[row + 1][col + 1][0] == 'w':  # check enemy
+                    moves.append(Move((row, col), (row + 1, col + 1), self.board))
+            if col - 1 >= 0:  # Capture to the left
+                if self.board[row + 1][col - 1][0] == 'w':  # check enemy
+                    moves.append(Move((row, col), (row + 1, col - 1), self.board))
+
     def get_rock_move(self, row, col, moves):
-        pass
+        if self.whiteToMove:
+            for x, y in [[1, 0], [0, 1], [-1, 0], [0, -1]]:
+                count = 1
+                while cond(x, y, row, col, count) and (self.board[row + (x * count)][col + (y * count)] == "--" or
+                                                       self.board[row + (x * count)][col + (y * count)][0] == "b"):
+                    moves.append(Move((row, col), (row + (x * count), col + (y * count)), self.board))
+                    count += 1
+        else:  # Black to move
+            for x, y in [[1, 0], [0, 1], [-1, 0], [0, -1]]:
+                count = 1
+                while cond(x, y, row, col, count) and (self.board[row + (x * count)][col + (y * count)] == "--" or
+                                                       self.board[row + (x * count)][col + (y * count)][0] == "w"):
+                    moves.append(Move((row, col), (row + (x * count), col + (y * count)), self.board))
+                    count += 1
 
     def get_bishop_move(self, row, col, moves):
-        pass
+        if self.whiteToMove:
+            for x, y in [[1, 1], [-1, 1], [1, -1], [-1, -1]]:
+                count = 1
+                while cond(x, y, row, col, count) and (self.board[row + (x * count)][col + (y * count)] == "--" or
+                                                       self.board[row + (x * count)][col + (y * count)][0] == "b"):
+                    moves.append(Move((row, col), (row + (x * count), col + (y * count)), self.board))
+                    count += 1
+        else:  # Black to move
+            for x, y in [[1, 1], [-1, 1], [1, -1], [-1, -1]]:
+                count = 1
+                while cond(x, y, row, col, count) and (self.board[row + (x * count)][col + (y * count)] == "--" or
+                                                       self.board[row + (x * count)][col + (y * count)][0] == "w"):
+                    moves.append(Move((row, col), (row + (x * count), col + (y * count)), self.board))
+                    count += 1
 
     def get_knight_move(self, row, col, moves):
         pass
